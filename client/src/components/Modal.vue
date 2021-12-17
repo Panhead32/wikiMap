@@ -3,9 +3,27 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <button class="modal-default-button" @click="$emit('popUp')">
-            OK
-          </button>
+          <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="Name" prop="name">
+              <el-input v-model="ruleForm.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Short Name" prop="shortName">
+              <el-input v-model="ruleForm.shortName" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Description" prop="description">
+              <el-input v-model="ruleForm.description"  autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Coordinates" prop="coordinates">
+              <el-input v-model="ruleForm.coordinates"  autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="File" prop="file">
+              <el-input v-model="ruleForm.file"  autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')">Submit</el-button>
+              <el-button @click="resetForm('ruleForm')">Reset</el-button>
+            </el-form-item>
+          </el-form>
         </div>
       </div>
     </div>
@@ -15,7 +33,79 @@
 <script>
 
 export default {
-
+  data () {
+    let checkAge = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('Please input the age'))
+      }
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('Please input digits'))
+        } else {
+          if (value < 18) {
+            callback(new Error('Age must be greater than 18'))
+          } else {
+            callback()
+          }
+        }
+      }, 1000)
+    }
+    let validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input the password'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    let validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input the password again'))
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('Two inputs don\'t match!'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      ruleForm: {
+        name: '',
+        shortName: '',
+        description: '',
+        coordinates: '',
+        file: ''
+      },
+      rules: {
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        age: [
+          { validator: checkAge, trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  methods: {
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!')
+          axios.post(`/points/${uuidv4()}`, this.ruleForm)
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    }
+  }
 }
 </script>
 
