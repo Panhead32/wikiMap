@@ -16,6 +16,7 @@ pool.on('error', (err, client) => {
 async function many(q) {
   try {
     let res = await pool.query(q)
+    pool.end;
     return res;
   } catch (e) {
     return e;
