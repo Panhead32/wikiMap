@@ -2,12 +2,19 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
+router.get('/all', async (req, res) => {
+  const { rows } = await pgQ.many(`select * from wiki.objeccts`)
+  console.log(rows);
+  res.send(rows)
+})
 
 router.get('/:id', async (req, res) => {
+  if (!req.params) res.send('no params')
   const { id } = req.params
   const { rows } = await pgQ.many(`select * from wiki.objeccts where id = '${id}'`)
-  res.send(rows[0])
+  res.send(rows)
 })
+
 
 router.post('/', async (req, res) => {
   const id = req.query?.id

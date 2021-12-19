@@ -4,6 +4,9 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+            <el-form-item label="Id" prop="id" hidden>
+              <el-input v-model="ruleForm.id" autocomplete="off"></el-input>
+            </el-form-item>
             <el-form-item label="Name" prop="name">
               <el-input v-model="ruleForm.name" autocomplete="off"></el-input>
             </el-form-item>
@@ -35,62 +38,26 @@ import { v4 as uuidv4 } from 'uuid'
 const { axios } = window
 
 export default {
+  props: {
+    coordinates: {
+      type: Array,
+      default: null
+    }
+  },
   data () {
-    let checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error('Please input the age'))
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error('Please input digits'))
-        } else {
-          if (value < 18) {
-            callback(new Error('Age must be greater than 18'))
-          } else {
-            callback()
-          }
-        }
-      }, 1000)
-    }
-    let validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please input the password'))
-      } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    let validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please input the password again'))
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error('Two inputs don\'t match!'))
-      } else {
-        callback()
-      }
-    }
     return {
       ruleForm: {
+        id: '',
         name: '',
         shortName: '',
         description: '',
-        coordinates: '',
+        coordinates: this.coordinates || '',
         file: ''
-      },
-      rules: {
-        pass: [
-          { validator: validatePass, trigger: 'blur' }
-        ],
-        checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
-        ],
-        age: [
-          { validator: checkAge, trigger: 'blur' }
-        ]
       }
     }
+  },
+  mounted () {
+    this.getData(this.ruleForm.coordinates)
   },
   methods: {
     submitForm (formName) {
@@ -105,6 +72,7 @@ export default {
       })
     },
     resetForm (formName) {
+      this.$emit('popUp', null)
       this.$refs[formName].resetFields()
     }
   }

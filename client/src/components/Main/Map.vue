@@ -4,19 +4,28 @@
 
 <script>
 
-const { ol } = window
+const { ol, axios } = window
 export default {
   name: 'Map',
   data () {
     return {
-      map: null
+      map: null,
+      points: new ol.layer.VectorLayer({
+        source: this.vectorSource
+      })
     }
   },
   mounted () {
     this.init()
+    this.getAllPoints()
     this.clickHadler()
   },
   methods: {
+    async getAllPoints () {
+      const { data } = await axios.get('http://localhost:3001/points/all')
+      const coordinates = data.map((el) => el.coordinates)
+      console.log(coordinates)
+    },
     init () {
       this.map = new ol.Map({
         target: 'map',
@@ -32,15 +41,14 @@ export default {
       })
     },
     clickHadler () {
-      this.map.on('click', () => {
-        this.$emit('popUp')
+      this.map.on('click', (data) => {
+        this.$emit('popUp', data)
       })
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .map {
   width: 100%;
