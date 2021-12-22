@@ -63,8 +63,7 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
-          axios.post(`/points/${uuidv4()}`, this.ruleForm)
+          axios.post(`/points/?id=${uuidv4()}`, this.ruleForm)
         } else {
           console.log('error submit!!')
           return false
