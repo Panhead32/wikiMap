@@ -9,7 +9,8 @@ export default {
   name: 'Map',
   data () {
     return {
-      map: null
+      map: null,
+      data: null,
     }
   },
   async mounted () {
@@ -32,13 +33,18 @@ export default {
         })
       })
     },
+    setProps (el, idx) {
+      const a = new ol.geom.Point(el)
+      a.setProperties(this.data[idx].id)
+      debugger
+      return a
+    },
     async setPoints () {
-      let data = await this.getPoints()
-      data = data.map((el) => Object.values(el.coordinates))
-      const points = new ol.Collection(data.map((el) => {
-        debugger
+      this.data = await this.getPoints()
+      const coordinates = this.data.map((el) => Object.values(el.coordinates))
+      const points = new ol.Collection(coordinates.map((el, idx) => {
         return new ol.Feature({
-          geometry: new ol.geom.Point(el)
+          geometry: this.setProps(el, idx)
         })
       }))
       const vectorSource = new ol.source.Vector({
