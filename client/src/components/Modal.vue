@@ -61,7 +61,7 @@ export default {
     }
   },
   async mounted () {
-    await this.getData(this.id)
+    await this.mergeData()
   },
   methods: {
     submitForm (formName) {
@@ -80,8 +80,11 @@ export default {
     },
     async getData (id) {
       const { data } = await axios.get(`http://localhost:3001/points/${id}`)
-      debugger
-      return data
+      return data[0]
+    },
+    async mergeData () {
+      this.ruleForm = Object.assign(this.ruleForm, await this.getData(this.id))
+      this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates)
     }
   }
 }
