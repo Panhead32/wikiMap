@@ -5,6 +5,7 @@
       @popUp="modal"
       v-if="showModal"
       :coordinates=coordinates
+      :id=id
     >
     </Modal>
   </div>
@@ -24,22 +25,19 @@ export default {
   data () {
     return {
       showModal: false,
-      coordinates: null
+      coordinates: null,
+      id: null
     }
   },
   methods: {
-    modal (params) {
+    async modal (params) {
       this.showModal = !this.showModal
       if (params) {
         this.coordinates = params.coordinate
-        if (this.showModal) {
-          this.getData(this.coordinates)
+        if (Array.isArray(params)) {
+          this.id = params[0].getProperties().geometry.A.id
         }
       }
-    },
-    async getData (coords) {
-      const { data } = await axios.get(`http://localhost:3001/points/`)
-      console.log(data)
     }
   }
 }

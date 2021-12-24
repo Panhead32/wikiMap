@@ -42,6 +42,10 @@ export default {
     coordinates: {
       type: Array,
       default: null
+    },
+    id: {
+      type: Text,
+      default: ''
     }
   },
   data () {
@@ -56,8 +60,8 @@ export default {
       }
     }
   },
-  mounted () {
-    this.getData(this.ruleForm.coordinates)
+  async mounted () {
+    await this.getData(this.id)
   },
   methods: {
     submitForm (formName) {
@@ -73,6 +77,11 @@ export default {
     resetForm (formName) {
       this.$emit('popUp', null)
       this.$refs[formName].resetFields()
+    },
+    async getData (id) {
+      const { data } = await axios.get(`http://localhost:3001/points/${id}`)
+      debugger
+      return data
     }
   }
 }

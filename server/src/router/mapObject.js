@@ -3,7 +3,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 router.get('/all', async (req, res) => {
-  const { rows } = await pgQ.many(`select * from wiki.objeccts`)
+  const { rows } = await pgQ.many(`select id, coordinates from wiki.objeccts`)
   console.log(rows);
   res.send(rows)
 })

@@ -10,12 +10,12 @@ export default {
   data () {
     return {
       map: null,
-      data: null,
+      data: null
     }
   },
   async mounted () {
     await this.init()
-    this.clickHadler()
+    this.clickHandler()
   },
   methods: {
     async init () {
@@ -33,10 +33,9 @@ export default {
         })
       })
     },
-    setProps (el, idx) {
+    setPointProps (el, idx) {
       const a = new ol.geom.Point(el)
-      a.setProperties(this.data[idx].id)
-      debugger
+      a.setProperties({id: this.data[idx].id})
       return a
     },
     async setPoints () {
@@ -44,7 +43,7 @@ export default {
       const coordinates = this.data.map((el) => Object.values(el.coordinates))
       const points = new ol.Collection(coordinates.map((el, idx) => {
         return new ol.Feature({
-          geometry: this.setProps(el, idx)
+          geometry: this.setPointProps(el, idx)
         })
       }))
       const vectorSource = new ol.source.Vector({
@@ -64,9 +63,17 @@ export default {
       })
       return VectorLayer
     },
-    clickHadler () {
+    clickHandler () {
       this.map.on('click', (data) => {
-        this.$emit('popUp', data)
+        const s = []
+        this.map.forEachFeatureAtPixel(data.pixel, (feature, layer) => {
+          s.push(feature)
+        })
+        if (s.length) {
+          this.$emit('popUp', s)
+        } else {
+          this.$emit('popUp', data)
+        }
       })
     },
     async getPoints () {
