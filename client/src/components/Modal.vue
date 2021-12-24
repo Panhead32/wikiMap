@@ -11,7 +11,7 @@
               <el-input v-model="ruleForm.name" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="Short Name" prop="shortName">
-              <el-input v-model="ruleForm.shortName" autocomplete="off"></el-input>
+              <el-input v-model="ruleForm.short_name" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="Description" prop="description">
               <el-input v-model="ruleForm.description"  autocomplete="off"></el-input>
@@ -45,7 +45,7 @@ export default {
     },
     id: {
       type: Text,
-      default: ''
+      default: null
     }
   },
   data () {
@@ -53,7 +53,7 @@ export default {
       ruleForm: {
         id: '',
         name: '',
-        shortName: '',
+        short_name: '',
         description: '',
         coordinates: '',
         file: ''
@@ -68,7 +68,7 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          axios.post(`/points/?id=`, this.ruleForm)
+          axios.post(`http://localhost:3001/points/`, this.ruleForm)
         } else {
           console.log('error submit!!')
           return false
@@ -84,12 +84,11 @@ export default {
       return data[0]
     },
     async mergeData () {
-      this.ruleForm = Object.assign({coordinates: this.coordinates}, this.ruleForm, await this.getData(this.id))
-      this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates)
+      this.ruleForm = Object.assign(this.ruleForm, await this.getData(this.id))
+      this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates).length ? Object.values(this.ruleForm.coordinates) : this.coordinates
     },
     clearFields () {
       this.$refs['ruleForm'].resetFields()
-      debugger
     }
   }
 }

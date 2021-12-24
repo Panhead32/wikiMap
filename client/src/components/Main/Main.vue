@@ -32,11 +32,12 @@ export default {
   methods: {
     async modal (params) {
       this.showModal = !this.showModal
-      if (params) {
+      if (!Array.isArray(params)) {
+        this.id = null
         this.coordinates = params.coordinate
-        if (Array.isArray(params)) {
-          this.id = params[0].getProperties().geometry.A.id
-        }
+      } else {
+        this.id = params[0].getProperties().geometry.A.id
+        this.coordinates = null
       }
     }
   }
