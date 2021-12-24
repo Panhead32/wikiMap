@@ -3,30 +3,51 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-            <el-form-item label="Id" prop="id" hidden>
-              <el-input v-model="ruleForm.id" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="Name" prop="name">
-              <el-input v-model="ruleForm.name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="Short Name" prop="shortName">
-              <el-input v-model="ruleForm.short_name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="Description" prop="description">
-              <el-input v-model="ruleForm.description"  autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="Coordinates" prop="coordinates">
-              <el-input v-model="ruleForm.coordinates"  autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="File" prop="file">
-              <el-input v-model="ruleForm.file"  autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')">Submit</el-button>
-              <el-button @click="resetForm('ruleForm')">Reset</el-button>
-            </el-form-item>
-          </el-form>
+          <template v-if="showInfo">
+            <div>
+            <el-button class="btn-close" type="danger" size="mini" circle @click="resetForm()"> x </el-button>
+              <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
+                <el-form-item label="Id" prop="id" hidden>
+                  <el-input v-model="ruleForm.id" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Name" prop="name">
+                  <el-input v-model="ruleForm.name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Short Name" prop="shortName">
+                  <el-input v-model="ruleForm.short_name" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Description" prop="description">
+                  <el-input v-model="ruleForm.description"  autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="Coordinates" prop="coordinates">
+                  <el-input v-model="ruleForm.coordinates"  autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="File" prop="file">
+                  <el-input v-model="ruleForm.file"  autocomplete="off"></el-input>
+                </el-form-item>
+                <div class="submit-btn">
+                  <el-button type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
+                  <el-button type="primary" @click="submitForm('ruleForm')">Submit</el-button>
+                  <el-button @click="resetForm('ruleForm')">Reset</el-button>
+                </div>
+              </el-form>
+            </div>
+          </template>
+          <template v-else>
+            <el-button class="btn-close" type="danger" size="mini" circle @click="resetForm()"> x </el-button>
+            <div>
+            <h4>{{ ruleForm.name }}</h4>
+            <h6>{{ ruleForm.short_name }}</h6>
+            <br>
+            <p v-html="ruleForm.description"></p>
+            <code>{{ ruleForm.coordinates }}</code>
+            <br>
+            <img :src="ruleForm.file" alt="photo">
+            </div>
+            <div class="submit-btn">
+              <el-button utton type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -50,6 +71,7 @@ export default {
   },
   data () {
     return {
+      showInfo: false,
       ruleForm: {
         id: '',
         name: '',
@@ -61,7 +83,6 @@ export default {
     }
   },
   async mounted () {
-    this.clearFields()
     await this.mergeData()
   },
   methods: {
@@ -75,9 +96,8 @@ export default {
         }
       })
     },
-    resetForm (formName) {
+    resetForm () {
       this.$emit('popUp', null)
-      this.$refs[formName].resetFields()
     },
     async getData (id) {
       const { data } = await axios.get(`http://localhost:3001/points/${id}`)
@@ -87,14 +107,24 @@ export default {
       this.ruleForm = Object.assign(this.ruleForm, await this.getData(this.id))
       this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates).length ? Object.values(this.ruleForm.coordinates) : this.coordinates
     },
-    clearFields () {
-      this.$refs['ruleForm'].resetFields()
+    changeFormState () {
+      console.log(this.showInfo);
+      this.showInfo = !this.showInfo
     }
   }
 }
 </script>
 
 <style scoped>
+.submit-btn {
+  justify-content: right;
+  display: flex;
+}
+.btn-close {
+    position: absolute;
+    right: 41%;
+    z-index: 100;
+}
 .modal-mask {
   position: fixed;
   z-index: 9998;
