@@ -55,19 +55,20 @@ export default {
         name: '',
         shortName: '',
         description: '',
-        coordinates: this.coordinates || '',
+        coordinates: '',
         file: ''
       }
     }
   },
   async mounted () {
+    this.clearFields()
     await this.mergeData()
   },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          axios.post(`/points/?id=${uuidv4()}`, this.ruleForm)
+          axios.post(`/points/?id=`, this.ruleForm)
         } else {
           console.log('error submit!!')
           return false
@@ -83,8 +84,12 @@ export default {
       return data[0]
     },
     async mergeData () {
-      this.ruleForm = Object.assign(this.ruleForm, await this.getData(this.id))
+      this.ruleForm = Object.assign({coordinates: this.coordinates}, this.ruleForm, await this.getData(this.id))
       this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates)
+    },
+    clearFields () {
+      this.$refs['ruleForm'].resetFields()
+      debugger
     }
   }
 }

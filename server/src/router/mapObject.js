@@ -18,6 +18,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const id = req.query?.id
+  console.log(req.body);
   let q = id ? `update wiki.objeccts set description = 'test1' where id = '${id}'`
   : `INSERT INTO wiki.objeccts(
     short_name, name, id, description, coordinates, image)
