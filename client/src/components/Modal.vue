@@ -5,7 +5,7 @@
         <div class="modal-container">
           <template v-if="showInfo">
             <div>
-            <el-button class="btn-close" type="danger" size="mini" circle @click="resetForm()"> x </el-button>
+            <el-button class="btn-close" type="danger" size="mini" circle @click="closeForm()"> x </el-button>
               <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
                 <el-form-item label="Id" prop="id" hidden>
                   <el-input v-model="ruleForm.id" autocomplete="off"></el-input>
@@ -34,7 +34,7 @@
             </div>
           </template>
           <template v-else>
-            <el-button class="btn-close" type="danger" size="mini" circle @click="resetForm()"> x </el-button>
+            <el-button class="btn-close" type="danger" size="mini" circle @click="closeForm()"> x </el-button>
             <div>
             <h4>{{ ruleForm.name }}</h4>
             <h6>{{ ruleForm.short_name }}</h6>
@@ -45,7 +45,7 @@
             <img :src="ruleForm.file" alt="photo">
             </div>
             <div class="submit-btn">
-              <el-button utton type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
+              <el-button type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
             </div>
           </template>
         </div>
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid'
 const { axios } = window
 
 export default {
@@ -96,7 +95,7 @@ export default {
         }
       })
     },
-    resetForm () {
+    closeForm () {
       this.$emit('popUp', null)
     },
     async getData (id) {
@@ -108,7 +107,7 @@ export default {
       this.ruleForm.coordinates = Object.values(this.ruleForm.coordinates).length ? Object.values(this.ruleForm.coordinates) : this.coordinates
     },
     changeFormState () {
-      console.log(this.showInfo);
+      console.log(this.showInfo)
       this.showInfo = !this.showInfo
     }
   }
