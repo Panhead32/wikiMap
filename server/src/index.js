@@ -4,11 +4,13 @@ const config = require('../config/config')
 const mainPage = require('./router/router')
 const pointActions = require('./router/mapObject')
 const cors = require('cors')
+const fileUpload = require('express-fileupload');
 
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 app.use(cors())
+app.use(fileUpload());
 app.use('/', mainPage)
 app.use('/points', pointActions)
 

@@ -23,11 +23,11 @@
                   <el-input v-model="ruleForm.coordinates"  autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="File" prop="file">
-                  <el-input v-model="ruleForm.file"  autocomplete="off"></el-input>
+                  <input type="file" @change="handleFileUpload" ref="file">
                 </el-form-item>
                 <div class="submit-btn">
                   <el-button type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
-                  <el-button type="primary" @click="submitForm('ruleForm')">Submit</el-button>
+                  <el-button type="primary" @click="submitForm">Submit</el-button>
                   <el-button @click="resetForm('ruleForm')">Reset</el-button>
                 </div>
               </el-form>
@@ -85,15 +85,12 @@ export default {
     await this.mergeData()
   },
   methods: {
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          axios.post(`http://localhost:3001/points/`, this.ruleForm)
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    submitForm () {
+      let formData = new FormData()
+      formData.append('file', this.$refs.file.files[0])
+      formData.append('body', JSON.stringify(this.ruleForm))
+      const headers = { 'Content-Type': 'multipart/form-data' }
+      axios.post(`http://localhost:3001/points/`, formData, { headers })
     },
     closeForm () {
       this.$emit('popUp', null)
@@ -109,6 +106,12 @@ export default {
     changeFormState () {
       console.log(this.showInfo)
       this.showInfo = !this.showInfo
+    },
+    handleFileUpload (event) {
+      console.log(event)
+    },
+    beforeRemove (file, fileList) {
+      return this.$confirm(`Cancel the transfert of ${file.name} ?`)
     }
   }
 }
