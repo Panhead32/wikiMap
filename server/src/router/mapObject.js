@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     short_name, name, id, description, coordinates, image)
     VALUES ('${body.short_name}', '${body.name}', '${uuidv4()}', '${body.description}', '(${body?.coordinates?.join(',')})', '${imgPath}');`;
     console.log(q);
-  if (files) fs.writeFile(imgPath, files.file.data, (err) => { if (err) console.log(err); return;});
+  if (files) await fs.writeFile(imgPath, files.file.data, (err) => { if (err) console.log(err); return;});
   await pgQ.many(q);
   res.send('Done')
 })
