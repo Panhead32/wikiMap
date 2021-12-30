@@ -22,10 +22,20 @@ router.get('/image/get/:id', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-  if (!req.params) res.send('no params')
+  if (!req.params?.id) res.send('no params')
   const { id } = req.params
   const { rows } = await pgQ.many(`select * from wiki.objeccts where id = '${id}'`)
   return res.send(rows)
+})
+
+
+router.put('/:id', async (req, res) => {
+  if (!req.params?.id) res.send('no params')
+  const { id } = req.params
+  const body = req.body;
+  const { rows } = await pgQ.many(`UPDATE wiki.objeccts SET (short_name, name, id, description, coordinates, image) = ('${body.short_name}', '${body.name}', '${uuidv4()}', '${body.description}', '(${body?.coordinates?.join(',')})', '${imgPath}')
+  WHERE id = '${id}'`)
+  return res.send('Success')
 })
 
 
@@ -34,11 +44,9 @@ router.post('/', async (req, res) => {
   const files = req?.files;
   const imgPath = files?.file?.name ? path.resolve(config.imgdir, files.file.name) : '';
   const { id } = body
-  let q = id ? `update wiki.objeccts set description = 'test1' where id = '${id}'`
-  : `INSERT INTO wiki.objeccts(
+  let q = `INSERT INTO wiki.objeccts(
     short_name, name, id, description, coordinates, image)
     VALUES ('${body.short_name}', '${body.name}', '${uuidv4()}', '${body.description}', '(${body?.coordinates?.join(',')})', '${imgPath}');`;
-    console.log(q);
   if (files) await fs.writeFile(imgPath, files.file.data, (err) => { if (err) console.log(err); return;});
   await pgQ.many(q);
   return res.send('Done')
