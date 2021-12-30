@@ -33,7 +33,7 @@ router.put('/:id', async (req, res) => {
   if (!req.params?.id) res.send('no params')
   const { id } = req.params
   const body = req.body;
-  const { rows } = await pgQ.many(`UPDATE wiki.objeccts SET (short_name, name, id, description, coordinates, image) = ('${body.short_name}', '${body.name}', '${uuidv4()}', '${body.description}', '(${body?.coordinates?.join(',')})', '${imgPath}')
+  await pgQ.many(`UPDATE wiki.objeccts SET (short_name, name, id, description, coordinates, image) = ('${body.short_name}', '${body.name}', '${uuidv4()}', '${body.description}', '(${body?.coordinates?.join(',')})', '${imgPath}')
   WHERE id = '${id}'`)
   return res.send('Success')
 })
