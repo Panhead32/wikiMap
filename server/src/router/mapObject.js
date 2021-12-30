@@ -1,23 +1,31 @@
 ﻿const pgQ = require('../utils/pg')
 const express = require('express');
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 const config = require('../../config/config')
 
 router.get('/all', async (req, res) => {
   const { rows } = await pgQ.many(`select id, coordinates from wiki.objeccts`)
-  console.log(rows);
   res.send(rows)
 })
 
+
+router.get('/image/get/:id', async (req, res) => {
+  if (!req.params?.id) return res.status(500).send('Id params missed');
+  const { rows } = await pgQ.many(`select image from wiki.objeccts where id = '${req.params.id}'`);
+  const filePath = rows?.[0]?.image;
+  if (!filePath) return res.status(204).send('No such file')
+  const fileData = await fs.readFileSync(filePath, 'base64', (err) => console.error(err));
+  return res.send({fileData});
+})
 
 router.get('/:id', async (req, res) => {
   if (!req.params) res.send('no params')
   const { id } = req.params
   const { rows } = await pgQ.many(`select * from wiki.objeccts where id = '${id}'`)
-  res.send(rows)
+  return res.send(rows)
 })
 
 
@@ -33,7 +41,7 @@ router.post('/', async (req, res) => {
     console.log(q);
   if (files) await fs.writeFile(imgPath, files.file.data, (err) => { if (err) console.log(err); return;});
   await pgQ.many(q);
-  res.send('Done')
+  return res.send('Done')
 })
 
 module.exports = router;

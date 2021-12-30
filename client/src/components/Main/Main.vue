@@ -4,8 +4,8 @@
     <Modal
       @popUp="modal"
       v-if="showModal"
-      :coordinates=coordinates
-      :id=id
+      :coordinates="coordinates"
+      :id="id"
     >
     </Modal>
   </div>

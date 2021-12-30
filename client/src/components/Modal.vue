@@ -42,7 +42,7 @@
             <p v-html="ruleForm.description"></p>
             <code>{{ ruleForm.coordinates }}</code>
             <br>
-            <img :src="ruleForm.file" alt="photo">
+            <ImageForm :id="id" />
             </div>
             <div class="submit-btn">
               <el-button type="primary" icon="el-icon-edit" circle @click="changeFormState()"></el-button>
@@ -57,14 +57,19 @@
 <script>
 const { axios } = window
 
+import ImageForm from './Image.vue'
+
 export default {
+  components: {
+    ImageForm
+  },
   props: {
     coordinates: {
       type: Array,
       default: null
     },
     id: {
-      type: Text,
+      type: String,
       default: null
     }
   },
