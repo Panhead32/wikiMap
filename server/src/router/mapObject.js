@@ -29,6 +29,14 @@ router.get('/:id', async (req, res) => {
 })
 
 
+router.delete('/:id', async (req, res) => {
+  if (!req.params?.id) res.send('no params')
+  const { id } = req.params
+  await pgQ.many(`delete from wiki.objeccts where id = '${id}'`)
+  return res.send('Done')
+})
+
+
 router.put('/:id', async (req, res) => {
   if (!req.params?.id) res.send('no params')
   const { id } = req.params
